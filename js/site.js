@@ -131,6 +131,19 @@
     rows.forEach((r) => io.observe(r));
   }
 
+  /* services swipe deck on phones: dots follow the card in view and can be tapped */
+  const svcList = $('svcList'), pager = $('svcPager');
+  if (svcList && pager) {
+    const pLis = qsa('li', pager);
+    const cardW = () => rows[0].getBoundingClientRect().width + 12;
+    let pt = false;
+    svcList.addEventListener('scroll', () => {
+      if (pt) return; pt = true;
+      requestAnimationFrame(() => { pt = false; const i = Math.min(rows.length - 1, Math.max(0, Math.round(svcList.scrollLeft / cardW()))); pLis.forEach((l, k) => l.classList.toggle('on', k === i)); });
+    }, { passive: true });
+    pLis.forEach((l, i) => qs('button', l).addEventListener('click', () => svcList.scrollTo({ left: i * cardW(), behavior: reduce ? 'auto' : 'smooth' })));
+  }
+
   /* ---------- how: each mock-up plays once when it arrives ---------- */
   const steps = qsa('.step');
   function playStep(s) {
@@ -186,14 +199,31 @@
   addEventListener('scroll', () => { if (!navTick) { navTick = true; requestAnimationFrame(navTone); } }, { passive: true });
   navTone();
 
+  /* on phones the nav and dock slide away while you scroll down and come back when you scroll up or pause */
+  const dockEl = $('dock');
+  let lastY = scrollY, quietT = 0;
+  addEventListener('scroll', () => {
+    const y = scrollY, dy = y - lastY;
+    if (Math.abs(dy) < 6) return;
+    lastY = y;
+    if (innerWidth > 959) { nav.classList.remove('hide'); return; }
+    const down = dy > 0 && y > 140, menuOpen = burger && burger.getAttribute('aria-expanded') === 'true';
+    nav.classList.toggle('hide', down && !menuOpen);
+    if (dockEl) dockEl.classList.toggle('quiet', down);
+    clearTimeout(quietT);
+    if (down && dockEl) quietT = setTimeout(() => dockEl.classList.remove('quiet'), 700);
+  }, { passive: true });
+
   /* ---------- mobile dock appears after the hero ---------- */
   const dock = $('dock'), hero = $('top');
   if (dock && 'IntersectionObserver' in window) {
     const quote = $('quote');
-    let heroIn = true, quoteIn = false;
-    const upd = () => dock.classList.toggle('show', !heroIn && !quoteIn);
+    let heroIn = true, quoteIn = false, endIn = false;
+    const upd = () => dock.classList.toggle('show', !heroIn && !quoteIn && !endIn);
     new IntersectionObserver((es) => { heroIn = es[0].isIntersecting; upd(); }, { threshold: 0, rootMargin: '-40% 0px 0px 0px' }).observe(hero);
     new IntersectionObserver((es) => { quoteIn = es[0].isIntersecting; upd(); }, { threshold: .15 }).observe(quote);
+    /* the finale and footer already carry the same two buttons */
+    new IntersectionObserver((es) => { endIn = es[0].isIntersecting; upd(); }, { threshold: 0, rootMargin: '-30% 0px 0px 0px' }).observe($('finale'));
   }
 
   /* ==========================================================================
@@ -379,6 +409,20 @@
 
   /* wiring */
   buildGauge(); setLoad(2, false);
+  const gaugeEl = $('gauge'), qGrid = qs('.q-grid'), sizeBlock = qs('.size', form), phoneMq = matchMedia('(max-width: 959px)');
+  /* on a phone the gauge moves next to the slider, so you watch it react to your thumb */
+  const placeGauge = () => { if (phoneMq.matches) sizeBlock.insertBefore(gaugeEl, $('f-load')); else qGrid.insertBefore(gaugeEl, qGrid.firstChild); };
+  placeGauge();
+  (phoneMq.addEventListener ? phoneMq.addEventListener('change', placeGauge) : phoneMq.addListener(placeGauge));
+  /* one short demo of the gauge the first time it is on screen, so it reads as interactive */
+  if ('IntersectionObserver' in window && !reduce) {
+    const iog = new IntersectionObserver((es) => {
+      if (!es[0].isIntersecting) return;
+      iog.disconnect();
+      [0, 1, 3, 4, 2].forEach((idx, n) => setTimeout(() => { if (!St.loadSet) setLoad(idx, false); }, 500 + n * 620));
+    }, { threshold: .7 });
+    iog.observe(gaugeEl);
+  }
   St.no = orderNo();
   const rng = $('f-load');
   rng.addEventListener('input', () => setLoad(+rng.value, true));

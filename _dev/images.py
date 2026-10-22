@@ -27,3 +27,10 @@ for n in ['garage', 'furniture', 'construction', 'commercial', 'yard']:
     w, h = im.size
     im = sharpen(im.resize((int(w * 1.4), int(h * 1.4)), Image.LANCZOS))
     save(im, n + '.webp', 80)
+
+# phone-size copies (card is ~330 css px wide, so 900px covers 2.7x density) for the swipe cards
+for n in ['garage', 'furniture', 'construction', 'commercial', 'yard']:
+    im = Image.open(os.path.join(IMG, n + '.jpg')).convert('RGB')
+    w, h = im.size
+    im = sharpen(im.resize((900, int(h * 900 / w)), Image.LANCZOS))
+    save(im, n + '-m.webp', 78)
