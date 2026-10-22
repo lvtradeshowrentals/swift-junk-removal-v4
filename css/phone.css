@@ -37,6 +37,7 @@
   .hero-photo img { object-position: 50% 100%; }
   .js .hero-card::before { aspect-ratio: 6 / 5; border-radius: 26px; }
   .pin { top: var(--my); }
+  .pin { --dot: 8px; }
   .pin i { width: 16px; height: 16px; } .pin i::after { inset: 4px; }
   .pin b { font-size: 12.5px; padding: 6px 11px; margin-left: 8px; }
   .pin.rev b { margin-right: 8px; }
