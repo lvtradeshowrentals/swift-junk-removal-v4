@@ -78,7 +78,15 @@
   /* ---------- hero: one sequence once the font is ready ---------- */
   const root = document.documentElement;
   let started = false;
-  const go = () => { if (started) return; started = true; root.classList.add('go'); };
+  /* the photo sequence (reveal, scan, pins) waits until the card is mostly on screen, so a phone visitor sees all of it */
+  const heroCard = $('heroCard');
+  let cardSeen = !('IntersectionObserver' in window);
+  const tryCard = () => { if (started && cardSeen) heroCard.classList.add('card-go'); };
+  if (!cardSeen) {
+    const ioc = new IntersectionObserver((es) => { if (es[0].isIntersecting) { cardSeen = true; tryCard(); ioc.disconnect(); } }, { threshold: .6 });
+    ioc.observe(heroCard);
+  }
+  const go = () => { if (started) return; started = true; root.classList.add('go'); tryCard(); };
   if (document.fonts && document.fonts.load) {
     Promise.race([
       Promise.all([document.fonts.load('500 100px Archivo'), document.fonts.load('400 16px Archivo')]),

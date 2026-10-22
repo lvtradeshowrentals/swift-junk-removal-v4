@@ -197,6 +197,7 @@ ul, ol { list-style: none; }
 @media (max-width: 959px) { .hero-prom { grid-template-columns: 1fr 1fr; gap: 20px; } }
 @media (max-width: 520px) { .hero-prom { grid-template-columns: 1fr; gap: 14px; padding-bottom: 32px; } }
 
+.js .hero-card::before { content: ''; position: absolute; left: 0; right: 0; top: 0; aspect-ratio: 4 / 5; border-radius: var(--r-xl); background: linear-gradient(160deg, rgba(11, 18, 32, .06), rgba(11, 18, 32, .02)); box-shadow: inset 0 0 0 1px rgba(11, 18, 32, .06); }
 .scan { position: absolute; left: 0; right: 0; top: 0; height: 90px; margin-top: -90px; pointer-events: none; opacity: 0; background: linear-gradient(to bottom, rgba(232, 128, 63, 0), rgba(232, 128, 63, .42)); border-bottom: 2px solid rgba(255, 255, 255, .95); box-shadow: 0 2px 22px 2px rgba(232, 128, 63, .65); z-index: 2; }
 @keyframes scan { 0% { top: 0; opacity: 0; } 8% { opacity: 1; } 92% { opacity: 1; } 100% { top: calc(100% + 90px); opacity: 0; } }
 @keyframes drift { to { transform: translateY(-56px); } }
@@ -215,22 +216,22 @@ ul, ol { list-style: none; }
 .js .hero-chip { opacity: 0; }
 .go .hero-h .open { animation: open 1.7s var(--ease-io) both; }
 .go .hero-h .ln:nth-child(2) .open { animation-delay: .12s; }
-.go .hero-photo { animation: cardIn 1.25s var(--ease-io) .25s both; }
-.go .hero-photo img { animation: imgIn 1.9s var(--ease) .25s both; }
+.card-go .hero-photo { animation: cardIn 1.25s var(--ease-io) .25s both; }
+.card-go .hero-photo img { animation: imgIn 1.9s var(--ease) .25s both; }
 .go .nav-pill { animation: rise .8s var(--ease) .1s both; }
 .go .hero-sub { animation: rise .9s var(--ease) .95s both; }
 .go .zipbar { animation: rise .9s var(--ease) 1.1s both; }
 .go .zipnote { animation: rise .9s var(--ease) 1.2s both; }
 .go .hero-prom li { animation: rise .9s var(--ease) 1.4s both; }
 .go .hero-prom li:nth-child(2) { animation-delay: 1.48s; } .go .hero-prom li:nth-child(3) { animation-delay: 1.56s; } .go .hero-prom li:nth-child(4) { animation-delay: 1.64s; }
-.go .scan { animation: scan 1.35s cubic-bezier(.45, .05, .35, 1) 1.35s both; }
-.go .pin { animation: pinIn .6s var(--ease) var(--d) both; }
-.go .hero-chip { animation: chipIn .9s var(--ease) 2.75s both; }
+.card-go .scan { animation: scan 1.35s cubic-bezier(.45, .05, .35, 1) 1.35s both; }
+.card-go .pin { animation: pinIn .6s var(--ease) var(--d) both; }
+.card-go .hero-chip { animation: chipIn .9s var(--ease) 2.75s both; }
 @media (prefers-reduced-motion: reduce) {
   .js .hero-h .open, .js .fin-h .open { transform: none; }
   .js .hero-sub, .js .zipbar, .js .zipnote, .js .hero-prom li, .js .nav-pill, .js .pin, .js .hero-chip { opacity: 1; }
   .js .hero-photo { clip-path: none; }
-  .go * { animation: none !important; }
+  .go *, .card-go * { animation: none !important; }
 }
 
 .say { padding-block: clamp(90px, 12vw, 200px) clamp(10px, 2vw, 30px); }
@@ -251,7 +252,7 @@ ul, ol { list-style: none; }
 .svc-row .chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .chips li { padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line); font-size: 14px; font-weight: 500; background: rgba(255, 255, 255, .55); }
 .svc-row .link { justify-self: start; margin-top: 6px; }
-.svc-m { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: var(--r-lg); margin-bottom: 8px; }
+.svc-m { width: 100%; height: auto; aspect-ratio: 16 / 10; max-height: 46svh; object-fit: cover; border-radius: var(--r-lg); margin-bottom: 8px; }
 .svc-stage { display: none; }
 @media (min-width: 960px) {
   .svc-m { display: none; }
